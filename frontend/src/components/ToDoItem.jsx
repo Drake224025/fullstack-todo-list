@@ -5,15 +5,13 @@ import { useTodo } from "../contexts"; // Importing the custom hook from the con
 function ToDoItem({ todo }) {
   console.log("todo", todo);
   const [isTodoEditable, setIsTodoEditable] = useState(false); // State to manage todo edit mode
-  const [todoMsg, setTodoMsg] = useState(todo.toDo); // State to hold todo message
+  const [todoMsg, setTodoMsg] = useState(todo.title); // State to hold todo message
 
   const { updateToDo, deleteToDo, toggleComplete } = useTodo(); // Using the custom hook to access context functions
 
-  console.log("updateTodo", updateToDo);
-
   // Function to edit a todo
   const editTodo = () => {
-    updateToDo(todo.id, { ...todo, toDo: todoMsg }); // Updating todo message
+    updateToDo(todo.id, { ...todo, title: todoMsg }); // Updating todo message
     setIsTodoEditable(false); // Exiting edit mode
   };
 
