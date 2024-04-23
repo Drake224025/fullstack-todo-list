@@ -39,8 +39,11 @@ app.get("/tasks", (req, res) => {
 // POST /tasks - Create a new task
 app.post("/tasks", (req, res) => {
   const { title } = req.body;
-  if (!title) {
-    return res.status(400).send({ error: "Title is required" });
+  // Simple Validation
+  if (!title || title.trim().length === 0) {
+    return res
+      .status(400)
+      .send({ error: "Title is required and cannot be empty" });
   }
 
   db.run("INSERT INTO tasks (title) VALUES (?)", [title], (err) => {
