@@ -58,7 +58,7 @@ app.put("/tasks/:id", (req, res) => {
   const { title, completed } = req.body;
 
   // Simple validation
-  if (!title || typeof completed !== "boolean") {
+  if (!title || completed === undefined) {
     return res
       .status(400)
       .send({ error: "Valid title and completed status are required" });

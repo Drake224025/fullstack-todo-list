@@ -3,15 +3,14 @@ import { useState } from "react";
 import { useTodo } from "../contexts"; // Importing the custom hook from the context file
 
 function ToDoItem({ todo }) {
-  console.log("todo", todo);
   const [isTodoEditable, setIsTodoEditable] = useState(false); // State to manage todo edit mode
-  const [todoMsg, setTodoMsg] = useState(todo.title); // State to hold todo message
+  const [title, setTitle] = useState(todo.title); // State to hold todo message
 
   const { updateToDo, deleteToDo, toggleComplete } = useTodo(); // Using the custom hook to access context functions
 
   // Function to edit a todo
   const editTodo = () => {
-    updateToDo(todo.id, { ...todo, title: todoMsg }); // Updating todo message
+    updateToDo(todo.id, { ...todo, title }); // Updating todo message
     setIsTodoEditable(false); // Exiting edit mode
   };
 
@@ -19,6 +18,7 @@ function ToDoItem({ todo }) {
   const toggleCompleted = () => {
     toggleComplete(todo.id);
   };
+  console.log({ todo });
 
   return (
     <div
@@ -39,8 +39,8 @@ function ToDoItem({ todo }) {
         className={`border outline-none w-full bg-transparent rounded-lg ${
           isTodoEditable ? "border-black/10 px-2" : "border-transparent"
         }`}
-        value={todoMsg}
-        onChange={(e) => setTodoMsg(e.target.value)}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         readOnly={!isTodoEditable} // Read-only if not in edit mode
       />
       {/* Button for toggling edit mode or saving changes */}

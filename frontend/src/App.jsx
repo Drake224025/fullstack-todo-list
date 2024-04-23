@@ -1,52 +1,96 @@
 import { useEffect, useState } from "react";
-import { ToDoProvider } from "./contexts"; // Importing the ToDoProvider from the contexts file
-import { ToDoForm, ToDoItem } from "./components/"; // Importing ToDoForm and ToDoItem components
+import { ToDoProvider } from "./contexts";
+import { ToDoForm, ToDoItem } from "./components/";
 
 function App() {
-  const [toDos, setToDos] = useState([]); // State to manage the list of todos
+  // State to hold the todos
+  const [toDos, setToDos] = useState([]);
+
+  // Function to fetch todos from the server
+  const fetchToDos = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/tasks");
+      if (!response.ok) {
+        throw new Error("Failed to fetch todos");
+      }
+      const data = await response.json();
+      setToDos(data);
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
+  };
+
+  // Fetch todos on component mount
+  useEffect(() => {
+    fetchToDos();
+  }, []);
 
   // Function to add a new todo
-  const addToDo = (todo) => {
-    setToDos((prev) => [{ id: Date.now(), ...todo }, ...prev]); // Adding a new todo to the list
+  const addToDo = async (todo) => {
+    try {
+      const response = await fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(todo),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add todo");
+      }
+      await fetchToDos(); // Refresh todos after adding
+    } catch (error) {
+      console.error("Error adding todo:", error);
+    }
   };
 
-  // Function to delete a todo by ID
-  const deleteToDo = (id) => {
-    setToDos((prev) => prev.filter((item) => item.id !== id)); // Deleting a todo from the list
+  // Function to delete a todo
+  const deleteToDo = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete todo");
+      }
+      await fetchToDos(); // Refresh todos after deleting
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+    }
   };
 
-  // Function to update a todo by ID
-  const updateToDo = (id, todo) => {
-    setToDos(
-      (prev) =>
-        prev.map((prevTodo) => (prevTodo.id === todo.id ? todo : prevTodo)) // Updating a todo in the list
-    );
+  // Function to update a todo
+  const updateToDo = async (id, todo) => {
+    try {
+      console.log({ todo });
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(todo),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update todo");
+      }
+      await fetchToDos(); // Refresh todos after updating
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
   };
 
-  // Function to toggle the completion status of a todo by ID
-  const toggleComplete = (id) => {
-    setToDos((prev) =>
-      prev.map((prevTodo) =>
-        prevTodo.id === id
-          ? { ...prevTodo, completed: !prevTodo.completed } // Toggling completion status
-          : prevTodo
-      )
-    );
-  };
+  // Function to toggle the completion status of a todo
+  const toggleComplete = async (id) => {
+    const todoToUpdate = toDos.find((todo) => todo.id === id);
+    if (!todoToUpdate) return;
 
-  // useEffect to load todos from database on component mount
-  useEffect(() => {
-    const fetchTodo = async () => {
-      const response = await fetch("http://localhost:3000/tasks");
-      const toDos = await response.json();
-      setToDos(toDos);
-    };
-    fetchTodo();
-  }, []);
+    const updatedTodo = { ...todoToUpdate, completed: !todoToUpdate.completed };
+    await updateToDo(id, updatedTodo); // Update todo with new status
+  };
 
   return (
     <ToDoProvider
-      value={{ toDos, addToDo, deleteToDo, updateToDo, toggleComplete }} // Providing context values to child components
+      value={{ toDos, addToDo, deleteToDo, updateToDo, toggleComplete }}
     >
       <div className="bg-[#172842] min-h-screen py-8">
         {" "}
@@ -75,4 +119,4 @@ function App() {
   );
 }
 
-export default App; // Exporting the App component as default
+export default App;

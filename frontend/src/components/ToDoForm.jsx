@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useTodo } from "../contexts"; // Importing the custom hook from the context file
 
 function ToDoForm() {
-  const [toDo, setToDo] = useState(""); // State to hold the input value
+  const [title, setTitle] = useState(""); // State to hold the input value
   const { addToDo } = useTodo(); // Using the custom hook to access context functions
 
   // Function to add a new todo
   const add = (e) => {
     e.preventDefault(); // Prevent default form submission
-    if (!toDo) return; // Do nothing if the input is empty
-    addToDo({ toDo, completed: false }); // Call the addToDo function from context
+    if (!title) return; // Do nothing if the input is empty
+    addToDo({ title, completed: false }); // Call the addToDo function from context
   };
 
   return (
@@ -19,8 +19,8 @@ function ToDoForm() {
         type="text"
         placeholder="Write Todo..."
         className="w-full border border-black/10 rounded-l-lg px-3 outline-none duration-150 bg-white/20 py-1.5"
-        value={toDo}
-        onChange={(e) => setToDo(e.target.value)} // Update the state on input change
+        value={title}
+        onChange={(e) => setTitle(e.target.value)} // Update the state on input change
       />
       <button
         type="submit"
