@@ -3,7 +3,7 @@ const sqlite3 = require("sqlite3").verbose();
 const cors = require("cors");
 
 const app = express();
-const port = 5000; // Define your port number
+const port = 3000; // Define port number
 
 // Connect to the SQLite database (creates it if it doesn't exist)
 const db = new sqlite3.Database("./todo.db", (err) => {
