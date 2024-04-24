@@ -10,6 +10,11 @@ function ToDoItem({ todo }) {
 
   // Function to edit a todo
   const editTodo = () => {
+    if (!title.trim()) {
+      // Check if title is empty or only contains whitespace
+      return; // Exit the function early if title is empty
+    }
+
     updateToDo(todo.id, { ...todo, title }); // Updating todo message
     setIsTodoEditable(false); // Exiting edit mode
   };
